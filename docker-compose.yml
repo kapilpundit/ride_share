@@ -1,0 +1,82 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: ride_share_db
+    restart: always
+    environment:
+      MYSQL_DATABASE: ride_share_db
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 30s   # Increase interval for checking the health
+      retries: 3      # Check only 3 times before marking unhealthy
+      start_period: 60s  # Delay before running the first check
+    networks:
+      - ride_share_network
+
+  backend:
+    build:
+        context: ./backend  # Use the Dockerfile from the backend directory
+    container_name: ride_share_backend
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy  # Wait for MySQL to be ready
+    working_dir: /app
+    volumes:
+      - /work/ride_share/backend:/app
+    environment:
+      DATABASE_HOST: ride_share_db
+      DATABASE_PORT: 3306
+      DATABASE_NAME: ride_share_db
+      DATABASE_USER: root
+      DATABASE_PASSWORD: root
+    ports:
+      - "8000:8000"
+    command: >
+      sh -c "pip install django mysqlclient djangorestframework && tail -f /dev/null"
+    networks:
+      - ride_share_network
+
+  frontend:
+      build:
+        context: ./frontend  # Use the Dockerfile from the frontend directory
+      container_name: ride_share_frontend
+      # depends_on:
+      #   - backend
+      ports:
+        - "3000:3000"  # Expose port 3000 for React app
+      volumes:
+        - ./frontend:/app  # Ensure this path is correct
+        - /app/node_modules  # Prevent conflicts with local node_modules
+      networks:
+        - ride_share_network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: ride_share_phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: ride_share_db  # Ensure the host is the same as the db service name
+      PMA_PORT: 3306            # Ensure the port is correct
+      PMA_USER: root
+      PMA_PASSWORD: root
+      SERVER_NAME: localhost  # Set the ServerName to suppress the Apache warning
+    ports:
+      - "8080:80"
+    depends_on:
+      db:
+        condition: service_healthy  # Ensure phpMyAdmin waits for db to be healthy
+    networks:
+      - ride_share_network
+
+networks:
+  ride_share_network:
+    driver: bridge
+
+volumes:
+  mysql_data:  # Declare named volume

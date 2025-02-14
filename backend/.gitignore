@@ -1,0 +1,34 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+.env
+.envrc
+*.env
+
+# Django specific files
+*.log
+db.sqlite3
+db.sqlite3-journal
+media/
+staticfiles/
+*.pem
+
+# Migrations (if you want to exclude auto-generated migration files)
+*/migrations/*.py
+*/migrations/*.pyc
+!*/migrations/__init__.py
+
+# Security and configuration files
+*.key
+*.crt
+secrets.json
+
+# IDE / Editor files
+.vscode/
+.idea/
+*.sublime-workspace
+
