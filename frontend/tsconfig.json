@@ -1,15 +1,14 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
+    "target": "ES6",
+    "module": "commonjs",
     "jsx": "react-jsx",
     "moduleResolution": "node",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "typeRoots": [
-      "node_modules/@types"
-    ]
-  }
+    "isolatedModules": false
+  },
+  "include": ["src/**/*", "src/tests/**/*"]
 }
