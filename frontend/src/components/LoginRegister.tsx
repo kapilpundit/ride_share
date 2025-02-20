@@ -1,8 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import "./LoginRegister.css";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { useNavigate } from "react-router-dom";  // Import navigate hook
 
 interface FormData {
   username: string;
@@ -15,6 +18,11 @@ const LoginRegister: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({ username: "", email: "", password: "" });
   const [message, setMessage] = useState<string>("");
   const [passwordType, setPasswordType] = useState('password');
+  const navigate = useNavigate(); // Initialize navigation
+
+  useEffect(() => {
+    document.title = "Ride Share";
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -33,22 +41,29 @@ const LoginRegister: React.FC = () => {
       const payload = isLogin ? { username: formData.username, password: formData.password } : formData;
 
       const response = await axios.post(endpoint, payload);
+      
 
       if (response.data.access) {
-        alert('Login successful');
-        console.log('Access Token:', response.data.access);
         // Handle successful login, e.g., store the token, navigate, etc.
+        // Store JWT tokens in localStorage
+        localStorage.setItem("accessToken", response.data.access);
+        localStorage.setItem("refreshToken", response.data.refresh);
+
+        // Redirect to Dashboard
+        navigate("/dashboard");
       } else {
-        alert(response.data.message || 'Registration successful');
+        setIsLogin(true);
       }
-      setMessage(isLogin ? "Login successful" : "Registration successful");
+
+      toast.success(isLogin ? "Login Successful!" : "Registration Successful!");
     } catch (error) {
-      setMessage("Error: " + (error as any).response?.data?.error || "Something went wrong");
+      toast.error("Error: " + (error as any).response?.data?.error || "Something went wrong");
     }
   };
 
   return (
     <div className="form-container">
+      <ToastContainer />
       <h2>{isLogin ? "Login" : "Register"}</h2>
       <form onSubmit={handleSubmit}>
         <input type="text" name="username" placeholder="Username" value={formData.username} onChange={handleChange} required />
@@ -67,7 +82,7 @@ const LoginRegister: React.FC = () => {
           </span>
         </div>
 
-        <button type="submit">{isLogin ? "Login" : "Register"}</button>
+        <button type="submit" className="authenticate">{isLogin ? "Login" : "Register"}</button>
       </form>
       {message && <p>{message}</p>}
       <a onClick={() => setIsLogin(!isLogin)} className="switch-form-button">

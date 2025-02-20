@@ -33,7 +33,7 @@ body {
     font-size: 16px;
   }
   
-  button {
+  button.authenticate {
     width: 100%;
     padding: 12px;
     background-color: #4CAF50;
@@ -44,7 +44,7 @@ body {
     cursor: pointer;
   }
   
-  button:hover {
+  button.authenticate:hover {
     background-color: #45a049;
   }
   

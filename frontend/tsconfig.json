@@ -1,14 +1,28 @@
 {
   "compilerOptions": {
     "target": "ES6",
-    "module": "commonjs",
-    "jsx": "react-jsx",
+    "module": "esnext",
+    "jsx": "preserve",
     "moduleResolution": "node",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "isolatedModules": false
+    "isolatedModules": true,
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "noEmit": true,
+    "typeRoots": ["./node_modules/@types"],
+    "types": ["react", "react-dom", "react-router-dom"]
   },
-  "include": ["src/**/*", "src/tests/**/*"]
+  "include": [
+    "src/**/*",
+    "src/tests/**/*"
+  ]
 }
