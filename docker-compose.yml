@@ -46,6 +46,7 @@ services:
       build:
         context: ./frontend  # Use the Dockerfile from the frontend directory
       container_name: ride_share_frontend
+      restart: always
       # depends_on:
       #   - backend
       ports:
