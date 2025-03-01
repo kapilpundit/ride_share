@@ -134,5 +134,7 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  # Allow requests from your frontend (adjust if needed)
+    "http://localhost:5173",  # Allow requests from your frontend (adjust if needed)
 ]
+
+AUTH_USER_MODEL = 'ride_share_app.CustomUser'

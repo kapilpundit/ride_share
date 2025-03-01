@@ -1,6 +1,6 @@
 from django.shortcuts import render
 # ride_share_app/views.py
-from django.contrib.auth.models import User
+from .models import CustomUser as User
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response

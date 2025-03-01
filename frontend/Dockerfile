@@ -14,8 +14,8 @@ RUN npm install
 # Copy the rest of the React app files into the container
 COPY . /app/
 
-# Expose the frontend app port (default: 3000)
-EXPOSE 3000
+# Expose the frontend app port (default: 5173)
+EXPOSE 5173
 
 # Start React app
-CMD ["npm", "start"]
+CMD ["npm", "run", "dev"]

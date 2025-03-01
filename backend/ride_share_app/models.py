@@ -1,13 +1,26 @@
 from django.db import models
-from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings  # Import settings for AUTH_USER_MODEL
+from django.contrib.auth.models import AbstractUser
 
-# Create your models here.
+# Custom User model with additional fields
+class CustomUser(AbstractUser):
+    GENDER_CHOICES = [
+        ('Male', 'Male'),
+        ('Female', 'Female'),
+        ('Other', 'Other'),
+    ]
+
+    gender = models.CharField(max_length=6, choices=GENDER_CHOICES, null=True, blank=True)
+    primary_contact = models.CharField(max_length=16, unique=True, null=True, blank=True)
+    profile_pic = models.CharField(max_length=500, null=True, blank=True)
+
+    def __str__(self):
+        return self.username
 
 
 # Journey model to store ride details
 class Journey(models.Model):
-    driver = models.ForeignKey(User, on_delete=models.CASCADE)  # Link to the user who is the driver
+    driver = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)  # Use AUTH_USER_MODEL
     departure_location = models.CharField(max_length=255)
     destination_location = models.CharField(max_length=255)
     departure_time = models.DateTimeField()
@@ -21,8 +34,8 @@ class Journey(models.Model):
 
 # Booking model to store passenger bookings
 class Booking(models.Model):
-    passenger = models.ForeignKey(User, on_delete=models.CASCADE)  # Link to the passenger (user)
-    journey = models.ForeignKey(Journey, on_delete=models.CASCADE)  # Link to the journey the passenger booked
+    passenger = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)  # Use AUTH_USER_MODEL
+    journey = models.ForeignKey(Journey, on_delete=models.CASCADE)
     booking_time = models.DateTimeField(auto_now_add=True)
     number_of_seats = models.IntegerField()
     total_price = models.DecimalField(max_digits=6, decimal_places=2)
@@ -33,11 +46,10 @@ class Booking(models.Model):
 
 # Payment model to store payment details
 class Payment(models.Model):
-    booking = models.OneToOneField(Booking, on_delete=models.CASCADE)  # Link to the booking for which payment is made
+    booking = models.OneToOneField(Booking, on_delete=models.CASCADE)
     amount_paid = models.DecimalField(max_digits=6, decimal_places=2)
     payment_date = models.DateTimeField(auto_now_add=True)
     payment_status = models.CharField(max_length=20, choices=[('Pending', 'Pending'), ('Completed', 'Completed')])
 
     def __str__(self):
         return f"Payment of {self.amount_paid} for booking {self.booking.id}"
-
